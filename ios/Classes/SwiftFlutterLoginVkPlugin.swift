@@ -185,10 +185,14 @@ public class SwiftFlutterLoginVkPlugin: NSObject, FlutterPlugin {
 class VkUIDelegate : NSObject, VKSdkUIDelegate {
     private var rootViewController: UIViewController? {
         get {
-            if let vc = UIApplication.shared.delegate?.window??.rootViewController {
+            if
+                #available(iOS 13.0, *),
+                let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                let vc = scene.windows.first(where: {window in window.isKeyWindow})?.rootViewController {
                 return vc
             }
-            return (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.keyWindow?.rootViewController
+            let app = UIApplication.shared
+            return app.delegate?.window??.rootViewController
         }
     }
     
