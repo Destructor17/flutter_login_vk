@@ -187,8 +187,14 @@ class VkUIDelegate : NSObject, VKSdkUIDelegate {
         get {
             if
                 #available(iOS 13.0, *),
-                let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                let vc = scene.windows.first(where: {window in window.isKeyWindow})?.rootViewController {
+                let vc = UIApplication.shared.connectedScenes
+                    .compactMap({ $0 as? UIWindowScene })
+                    .filter({ $0.activationState == .foregroundActive || $0.activationState == .foregroundInactive })
+                    .flatMap({ $0.windows })
+                    .filter({ $0.isKeyWindow })
+                    .compactMap({ $0.rootViewController })
+                    .first
+            {
                 return vc
             }
             let app = UIApplication.shared
